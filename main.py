@@ -10,7 +10,7 @@
 
 import mediapipe as mp
 import cv2
-import playsound
+import pygame.mixer
 import glob
 import random
 
@@ -46,6 +46,7 @@ def get_result(result: GestureRecognizerResult, output_image: mp.Image, timestam
 
 video = cv2.VideoCapture(0)
 timestamp = 0
+pygame.mixer.init()
 
 # landmarkの繋がり表示用
 landmark_line_ids = [
@@ -119,10 +120,11 @@ with GestureRecognizer.create_from_options(options) as recognizer:
             if Flag == True:
                 Flag = False
 
-                file_list = glob.glob('.\wavfiles\*.wav')
+                file_list = glob.glob('./wavfiles/*.wav')
                 wavfile_fullpath = random.choice(file_list)
                 print (wavfile_fullpath)
-                playsound.playsound(wavfile_fullpath)
+                pygame.mixer.music.load(wavfile_fullpath)
+                pygame.mixer.music.play(1)
 
                 # 音声再生後、counter が 15 のままだと、音声がループするため
                 Counter += 1
