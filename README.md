@@ -1,8 +1,14 @@
 # Thums-up_Recognize
 * 環境構築
+  * 使用するハード(PCに繋ぐだけで良い)
+    * webカメラ
+    * 音声を再生するもの(スピーカー等)
+  * 使用するソフト
+    * Windows 11 (Windows 10 でも可？)
+    * Python 3.9.13 (Python 3.9.Xなら可？)
   * 仮想環境に必要なモジュールをインストール
     * python -m venv env
-    * source env/bin/activate
+    * env\Scripts\activate.bat
     * pip install -r requirements.txt
   * プログラム実行
     * python main.py
