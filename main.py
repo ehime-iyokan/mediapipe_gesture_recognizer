@@ -24,12 +24,13 @@ Flag = False
 Counter = 0
 Result = None
 
-# Create a image segmenter instance with the live stream mode:
+# recognize_async のコールバック関数
 def get_result(result: GestureRecognizerResult, output_image: mp.Image, timestamp_ms: int):
     global Counter, Result
 
     Result = result
 
+    # gesture の データ取得・出力
     data = result.gestures
     if len(data) != 0:
         gesture = data[0][0].category_name
@@ -69,68 +70,62 @@ options = GestureRecognizerOptions(
 )
 
 with GestureRecognizer.create_from_options(options) as recognizer:
-        # The recognizer is initialized. Use it here.
-        while video.isOpened():
-            # Capture frame-by-frame
-            ret, frame = video.read()
+    while video.isOpened():
+        ret, frame = video.read()
+        if not ret:
+            print("Ignoring empty frame")
+            break
 
-            if not ret:
-                print("Ignoring empty frame")
-                break
+        frame = cv2.flip(frame, 1)          # 画像を左右反転
+        frame_h, frame_w, _ = frame.shape     # サイズ取得
 
-            frame = cv2.flip(frame, 1)          # 画像を左右反転
-            frame_h, frame_w, _ = frame.shape     # サイズ取得
+        timestamp += 1
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+        recognizer.recognize_async(mp_image, timestamp)
 
-            timestamp += 1
-            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
-            # Send live image data to perform gesture recognition
-            # The results are accessible via the `result_callback` provided in
-            # the `GestureRecognizerOptions` object.
-            # The gesture recognizer must be created with the live stream mode.
-            recognizer.recognize_async(mp_image, timestamp)
+        # frame に landmark を描画
+        if Result:
+            # 検出した手の数分繰り返し
+            for hand_landmark in Result.hand_landmarks:
+                # landmarkの繋がりをlineで表示
+                for line_id in landmark_line_ids:
+                    # 1点目座標取得
+                    lm = hand_landmark[line_id[0]]
+                    lm_pos1 = (int(lm.x * frame_w), int(lm.y * frame_h))
+                    # 2点目座標取得
+                    lm = hand_landmark[line_id[1]]
+                    lm_pos2 = (int(lm.x * frame_w), int(lm.y * frame_h))
+                    # line描画
+                    cv2.line(frame, lm_pos1, lm_pos2, (128, 0, 0), 1)
 
-            if Result:
-                # 検出した手の数分繰り返し
-                for hand_landmark in Result.hand_landmarks:
-                    # landmarkの繋がりをlineで表示
-                    for line_id in landmark_line_ids:
-                        # 1点目座標取得
-                        lm = hand_landmark[line_id[0]]
-                        lm_pos1 = (int(lm.x * frame_w), int(lm.y * frame_h))
-                        # 2点目座標取得
-                        lm = hand_landmark[line_id[1]]
-                        lm_pos2 = (int(lm.x * frame_w), int(lm.y * frame_h))
-                        # line描画
-                        cv2.line(frame, lm_pos1, lm_pos2, (128, 0, 0), 1)
+                    # landmarkをcircleで表示
+                    z_list = [lm.z for lm in hand_landmark]
+                    z_min = min(z_list)
+                    z_max = max(z_list)
+                    for lm in hand_landmark:
+                        lm_pos = (int(lm.x * frame_w), int(lm.y * frame_h))
+                        lm_z = int((lm.z - z_min) / (z_max - z_min) * 255)
+                        cv2.circle(frame, lm_pos, 3, (255, lm_z, lm_z), -1)
 
-                        # landmarkをcircleで表示
-                        z_list = [lm.z for lm in hand_landmark]
-                        z_min = min(z_list)
-                        z_max = max(z_list)
-                        for lm in hand_landmark:
-                            lm_pos = (int(lm.x * frame_w), int(lm.y * frame_h))
-                            lm_z = int((lm.z - z_min) / (z_max - z_min) * 255)
-                            cv2.circle(frame, lm_pos, 3, (255, lm_z, lm_z), -1)
+        cv2.imshow("camera", frame)
 
-            cv2.imshow("camera", frame)
+        # gesture を判定し、音声を出力
+        if Counter == 5:
+            Flag = True
 
-            if Counter == 5:
-                Flag = True
+        if Flag == True:
+            Flag = False
+            file_list = glob.glob('./wavfiles/*.wav')
+            wavfile_fullpath = random.choice(file_list)
+            print (wavfile_fullpath)
+            pygame.mixer.music.load(wavfile_fullpath)
+            pygame.mixer.music.play(1)
 
-            if Flag == True:
-                Flag = False
+            # 音声再生後、counter が 15 のままだと、音声がループするため
+            Counter += 1
 
-                file_list = glob.glob('./wavfiles/*.wav')
-                wavfile_fullpath = random.choice(file_list)
-                print (wavfile_fullpath)
-                pygame.mixer.music.load(wavfile_fullpath)
-                pygame.mixer.music.play(1)
-
-                # 音声再生後、counter が 15 のままだと、音声がループするため
-                Counter += 1
-
-            if cv2.waitKey(5) & 0xFF == 27:
-                break
+        if cv2.waitKey(5) & 0xFF == 27:
+            break
 
 video.release()
 cv2.destroyAllWindows()
