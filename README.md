@@ -1,4 +1,6 @@
-# Thumbs-up_Recognize
+# Gesture_Recognizer
+
+## For Windows
 * 環境構築
   * 使用するハード(PCに繋ぐだけで良い)
     * webカメラ
@@ -6,12 +8,11 @@
   * 使用するソフト
     * Windows 11 (Windows 10 でも可？)
     * Python 3.9.13 (Python 3.9.Xなら可？)
-  * 仮想環境に必要なモジュールをインストール(cmdで実行する)
-    * python -m venv env
-    * env\Scripts\activate.bat
-    * pip install -r requirements.txt
-  * プログラム実行
-    * python main.py
+  * プログラム実行(pyproject.toml が存在するフォルダで以下のコマンドを実行する)
+    * poetry run my-script
 * 動作
   * Thumbs-up を検出すると音声ファイルが再生されます
   * "camera" ウィンドウに検出した手の目印(landmark)が表示されます
+  * プログラムを終了するには "ESC"キーを押します
+
+## For Raspberry Pi

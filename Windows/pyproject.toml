@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "GestureRecognizer"
+version = "0.1.0"
+description = ""
+authors = ["ehime-iyokan <znkknz4@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+wheel = "^0.40.0"
+mediapipe = "^0.10.2"
+opencv-contrib-python = "^4.8.0.74"
+numpy = "^1.25.1"
+pycparser = "^2.21"
+six = "^1.16.0"
+zipp = "^3.16.0"
+cffi = "^1.15.1"
+contourpy = "^1.1.0"
+cycler = "^0.11.0"
+fonttools = "^4.40.0"
+importlib-resources = "^6.0.0"
+kiwisolver = "^1.4.4"
+pillow = "^10.0.0"
+pyparsing = "^3.1.0"
+packaging = "^23.1"
+python-dateutil = "^2.8.2"
+absl-py = "^1.4.0"
+attrs = "^23.1.0"
+flatbuffers = "^23.5.26"
+sounddevice = "^0.4.6"
+pygame = "^2.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+my-script = "GestureRecognizer.GestureRecognizer:main"
