@@ -8,9 +8,11 @@
   * 使用するソフト
     * Windows 11 (Windows 10 でも可？)
     * Python 3.9.13 (Python 3.9.Xなら可？)
-  * 必要なパッケージをインストール
+    * poetry (下記を実行しインストール)
+      * python -m pip install poetry
+  * 必要なパッケージをインストール (pyproject.toml が存在するフォルダで以下のコマンドを実行する)
     * poetry install
-  * プログラム実行(pyproject.toml が存在するフォルダで以下のコマンドを実行する)
+  * プログラム実行
     * poetry run my-script
 * 動作
   * Thumbs-up を検出すると音声ファイルが再生されます
