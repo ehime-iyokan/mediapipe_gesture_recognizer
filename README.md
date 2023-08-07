@@ -8,6 +8,8 @@
   * 使用するソフト
     * Windows 11 (Windows 10 でも可？)
     * Python 3.9.13 (Python 3.9.Xなら可？)
+  * 必要なパッケージをインストール
+    * poetry install
   * プログラム実行(pyproject.toml が存在するフォルダで以下のコマンドを実行する)
     * poetry run my-script
 * 動作
